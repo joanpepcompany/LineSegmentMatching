@@ -278,7 +278,7 @@ CLineMatching::CLineMatching(Mat img1,  Mat line1, Mat tnode1, Mat img2,  Mat li
 	if (isVerbose)
 	{ 
 		plotLineMatches(colorImg1.clone(), colorImg2.clone(), vstrLineMatch, "Final line matches");	
-		waitKey();
+		waitKey(0);
 	}
 	// 
 };
@@ -291,7 +291,7 @@ void CLineMatching::descriptorEvaluationUniquePtMatches()
 void CLineMatching::lineMatches2Mat(Mat &mline)
 {
 	string fileName = _outFileName;
-	ofstream outFile(fileName.c_str(), ios_base::out);  //°´ÐÂ½¨»ò¸²¸Ç·½Ê½Ð´Èë  	
+	ofstream outFile(fileName.c_str(), ios_base::out);  //ï¿½ï¿½ï¿½Â½ï¿½ï¿½ò¸²¸Ç·ï¿½Ê½Ð´ï¿½ï¿½  	
 
 	vector<int> vser;
 	int nmatch = vstrLineMatch.size();	
@@ -305,7 +305,7 @@ void CLineMatching::lineMatches2Mat(Mat &mline)
 			strline2[ser2].pe.x, strline2[ser2].pe.y);
 		mline.push_back(tmat);
 		vser.push_back(ser1);
-		//	outFile<< ser1 << ' ' << ser2 <<endl;   //Ã¿ÁÐÊý¾ÝÓÃ tab ¸ô¿ª  			
+		//	outFile<< ser1 << ' ' << ser2 <<endl;   //Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ tab ï¿½ï¿½ï¿½ï¿½  			
 	}		
 	vector<int> vsidex;
 	sortIdx(vser, vsidex, SORT_EVERY_ROW);
@@ -315,7 +315,7 @@ void CLineMatching::lineMatches2Mat(Mat &mline)
 		int ser = vsidex.at(i);
 		int ser1 = vstrLineMatch[ser].serLine1;		
 		int ser2 = vstrLineMatch[ser].serLine2;		
-		outFile<< ser1 << ' ' << ser2 <<endl;   //Ã¿ÁÐÊý¾ÝÓÃ tab ¸ô¿ª  			
+		outFile<< ser1 << ' ' << ser2 <<endl;   //Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ tab ï¿½ï¿½ï¿½ï¿½  			
 	}
 }
 
@@ -4231,7 +4231,7 @@ void CLineMatching::concatenateTwoImgs(Mat mImg1, Mat mImg2, Mat &outImg)
 	cvSetImageROI( stacked, cvRect(img1.width, 0, img2.width, img2.height) ); 
 	cvCopy(&img2, stacked);//, stacked, NULL ); 
 	cvResetImageROI(stacked); 
-	outImg = Mat(stacked,0);
+	outImg = cv::cvarrToMat(stacked);
 }
 
 void CLineMatching::getPointsonPolarline(vector<Point2f> &PointSet1,vector<Point2f> &PointSet2, Mat_<double> F, double T, bool *pbIsKept)
@@ -4307,7 +4307,7 @@ void CLineMatching::findRobustFundamentalMat(vector<Point2f> &PointSet1,vector<P
 {
 	unsigned i;
 	vector<uchar> status;
-	findFundamentalMat(PointSet1,PointSet2,CV_RANSAC, _fmatThr, 0.99, status);
+	findFundamentalMat(PointSet1,PointSet2,CV_FM_RANSAC, _fmatThr, 0.99, status);
 	int time = 0;
 	vector<Point2f> goodPoints1,goodPoints2;
 	for (i = 0; i < status.size(); i ++)
@@ -4318,9 +4318,9 @@ void CLineMatching::findRobustFundamentalMat(vector<Point2f> &PointSet1,vector<P
 			goodPoints2.push_back(PointSet2[i]);
 		}
 	}
-	Mat F = findFundamentalMat(goodPoints1, goodPoints2,CV_LMEDS, _fmatThr, 0.99, status);
+	Mat F = findFundamentalMat(goodPoints1, goodPoints2,CV_FM_LMEDS, _fmatThr, 0.99, status);
 	getPointsonPolarline(PointSet1, PointSet2, F, _fmatThr, pbIsKept);
-	FMat = findFundamentalMat(PointSet1, PointSet2,CV_LMEDS, _fmatThr, 0.99, status);
+	FMat = findFundamentalMat(PointSet1, PointSet2,CV_FM_LMEDS, _fmatThr, 0.99, status);
 	FMat.convertTo(FMat, CV_32F);
 }
 
